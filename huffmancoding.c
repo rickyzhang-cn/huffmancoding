@@ -3,6 +3,11 @@
 
 #define MAXSIZE 100
 
+void init(void);
+void createht(void);
+void huffcode(void);
+void reverse(char *);
+
 typedef struct {
 	int weight;
 	int parent;
@@ -49,7 +54,7 @@ void init()	{
 		printf("can't close the file\n");
 		exit(0);
 	}
-	printf("the n is %d\n",n);
+
 }
 
 void createht()	{
@@ -57,10 +62,9 @@ void createht()	{
 	int k,s;
 	int f;
 	
-	for(k=n;k<=(2*n-1);k++)	{
-		printf("this is a test in for\n");
-		for(s=0;s<n;s++)	{
-			f=0;
+	for(k=n;k<(2*n-1);k++)	{
+		f=0;	//remenber!!!不要放错了地方
+		for(s=0;s<k;s++)	{	//寻找权值最小的两个结构体
 			if(ht[s].parent==-1)	{
 				if(f==0)  { mini=s; f++; }
 				else if(f==1) {
@@ -77,7 +81,7 @@ void createht()	{
 					}
 					else if(ht[s].weight<ht[minj].weight)	
 						minj=s;
-				} 
+				}
 			}
 		}
 	ht[k].weight=(ht[mini].weight+ht[minj].weight);
@@ -87,49 +91,44 @@ void createht()	{
 	
 	ht[mini].parent=ht[minj].parent=k;
 	}
+
 }
 
 
 void huffcode()	{
 	int i,j,t;
-	printf("this is a test in huffcode function\n");
 	int length;
 	for(i=0;i<n;i++)	{
 		j=i;
-	printf("this is a test in huffcode function\n");
 		length=0;
-		if(ht[j].parent!=-1)	{
+		while((ht[j].parent)!=-1)	{	//是循环，而不是判断，逻辑不能错
 			t=ht[j].parent;
-			if(ht[t].lchild==i)  hc[i].code[length]=0+'0';
-			if(ht[t].rchild==i)  hc[i].code[length]=1+'0';
-			length++;
-			j=i=t;
+			if(ht[t].lchild==j)  hc[i].code[length++]=0+'0';
+			if(ht[t].rchild==j)  hc[i].code[length++]=1+'0';
+			j=t;
 		}
-		else
-			hc[i].code[length]='\n';
+		hc[i].code[length]='\0';
 			
 	reverse(hc[i].code);	
 	}
-	printf("this is a test in huffcode function\n");
 }
 
 void reverse(char *cp)	{
 	int i=0;
-	int l=strlen(cp);
+	int l=(strlen(cp)-1);
 	char temp;
 	for(;i<l;i++,l--)	{
 		temp=cp[i];
 		cp[i]=cp[l];
 		cp[l]=temp;
 	}
+
 }
 
 
 void main(void)	{
 	int i;
 
-	printf("this is a test in main function\n");
-	
 	init();
 	createht();
 	huffcode();
@@ -138,6 +137,4 @@ void main(void)	{
 		printf("the w is %c,the code is %s\n",hc[i].w,hc[i].code);
 	}
 
-	printf("the n is %d\n",n);	
-	printf("this is a test in main function\n");
 }
